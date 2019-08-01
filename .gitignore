@@ -1,0 +1,12 @@
+# python related files
+*.pyc
+__pycache__
+
+# db
+*.db
+
+# editor
+*.sublime*
+
+# env info
+venv/
