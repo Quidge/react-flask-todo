@@ -3,7 +3,7 @@
 __pycache__
 
 # db
-*.db
+*.sqlite
 
 # editor
 *.sublime*
