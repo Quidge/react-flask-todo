@@ -23,6 +23,5 @@ CREATE TABLE task (
   task_id INTEGER PRIMARY KEY AUTOINCREMENT,
   task_title TEXT NOT NULL,
   task_description TEXT,
-  task_order INTEGER UNIQUE NOT NULL,
   task_complete BOOLEAN NOT NULL
 );
