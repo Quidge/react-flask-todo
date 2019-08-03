@@ -8,6 +8,7 @@ from ..utils import validate_bool
 
 
 def make_public_task(task_dict):
+  """Creates a public version of a task_dict. task_id is replace with an appropriate URI and task_complete is coerced from a number to a python boolean"""
   new_task = {}
   for key, value in task_dict.items():
     # Switch task_id to task_uri
@@ -112,6 +113,7 @@ def update_task(task_id):
   task = c.execute('SELECT * FROM task WHERE task_id=%s' % (task_id,))
   res = task.fetchone()
   if res is None:
+    # Create the task that would be updated. PUT should be idempotent.
     return create_task()
   else:
     # Setup updated task from values present in request body
