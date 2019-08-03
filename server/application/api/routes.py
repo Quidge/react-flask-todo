@@ -25,7 +25,7 @@ def make_public_task(task):
 @bp.errorhandler(MissingParam)
 @bp.errorhandler(InvalidUsage)
 def handle_invalid_usage(err):
-  return jsonify(err.to_dict())
+  return jsonify(err.to_dict()), err.status_code
 
 
 @bp.route('/')
