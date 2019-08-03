@@ -5,7 +5,7 @@ from flask import jsonify, request, url_for, abort
 
 from . import bp
 from ..db import get_db
-from .errors import InvalidUsage
+from .errors import InvalidUsage, InvalidMediaType
 
 
 def make_public_task(task):
@@ -19,12 +19,10 @@ def make_public_task(task):
 
   return new_task
 
-
-@bp.errorhandler(InvalidUsage)
-def handle_invalid_usage(err):
-  res = jsonify(err.to_dict())
-  res.status_code = err.status_code
-  return res
+# @bp.errorhandler(InvalidMediaType)
+# @bp.errorhandler(InvalidUsage)
+# def handle_invalid_usage(err):
+#   return jsonify(err.to_dict())
 
 
 @bp.route('/')
@@ -92,5 +90,28 @@ def get_task(task_id):
     raise InvalidUsage('Cannot locate task with ID=%s.' % (task_id,), status_code=404)
   else:
     return jsonify({'task': dict(zip(keys, [col for col in res]))})
+
+
+@bp.route('/tasks/<int:task_id>', methods=['PUT'])
+def update_task(task_id):
+  if not request.is_json:
+    raise InvalidMediaType
+
+  if 'id' not in request.get_json():
+    abort(400)
+  try:
+    int(request.get_json()['id'])
+  except ValueError:
+    raise InvalidUsage('Invalid \'id\'.')
+
+    # return jsonify(InvalidUsage(message='Invalid \'id\'.').to_dict())
+
+
+
+  # conn = get_db()
+  # c = conn.cursor()
+  # try:
+  #   c.execute()
+
 
 
