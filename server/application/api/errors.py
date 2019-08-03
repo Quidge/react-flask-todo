@@ -31,6 +31,24 @@ class InvalidMediaType(InvalidUsage):
     super().__init__(
       self.message, status_code=InvalidMediaType.status_code, payload=payload)
 
+
+class MissingParam(InvalidUsage):
+  status_code = 422
+  default_message = 'Unprocessable Entity'
+
+  def __init__(self, message=default_message, missing_param=None, payload=None):
+    self.message = message
+    if payload is None:
+      self.payload = {}
+
+    if missing_param is not None:
+      self.payload['missing parameter'] = missing_param
+
+    super().__init__(
+      self.message, status_code=MissingParam.status_code, payload=self.payload)
+
+
+
   # def __init__(self, message=None, status_code=None, payload=None):
   #   InvalidUsage.__init__(self, message=self.message, status_code=self.status_code, payload=self.payload)
   #   if self.message is 

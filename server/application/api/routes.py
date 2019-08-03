@@ -5,7 +5,7 @@ from flask import jsonify, request, url_for, abort
 
 from . import bp
 from ..db import get_db
-from .errors import InvalidUsage, InvalidMediaType
+from .errors import InvalidUsage, InvalidMediaType, MissingParam
 
 
 def make_public_task(task):
@@ -22,6 +22,7 @@ def make_public_task(task):
 
 # Register error handlers
 @bp.errorhandler(InvalidMediaType)
+@bp.errorhandler(MissingParam)
 @bp.errorhandler(InvalidUsage)
 def handle_invalid_usage(err):
   return jsonify(err.to_dict())
@@ -100,11 +101,11 @@ def update_task(task_id):
     raise InvalidMediaType
 
   if 'id' not in request.get_json():
-    abort(400)
+    raise MissingParam(missing_param='id')
   try:
     int(request.get_json()['id'])
   except ValueError:
-    raise InvalidUsage('Invalid \'id\'.')
+    raise InvalidUsage('Invalid \'id\'')
 
     # return jsonify(InvalidUsage(message='Invalid \'id\'.').to_dict())
 
