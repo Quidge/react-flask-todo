@@ -21,7 +21,7 @@ def make_public_task(task_dict):
     else:
       new_task[key] = task_dict[key]
 
-  return new_task
+  return {"task": new_task}
 
 
 # Register error handlers
@@ -54,7 +54,6 @@ def get_tasks():
 
 @bp.route('/tasks', methods=['POST'])
 def create_task():
-  print(request.get_json())
   if not request.is_json:
     raise InvalidMediaType
   if 'task_title' not in request.get_json():
@@ -70,7 +69,7 @@ def create_task():
     VALUES ("{title}", "{desc}", {complete})""".format(
       title=r_payload['task_title'],
       desc=r_payload.get('task_description', ''),
-      complete=False
+      complete=0
       )
   )
 
@@ -85,12 +84,12 @@ def create_task():
   )
   res = db_res.fetchone()
   task_dict = dict(zip([h[0] for h in db_res.description], res))
-  public_task_dict = make_public_task(task_dict)
-  return jsonify(public_task_dict)
+  return jsonify(make_public_task(task_dict))
 
 
 @bp.route('/tasks/<int:task_id>', methods=['GET'])
 def get_task(task_id):
+  print(task_id)
 
   conn = get_db()
   c = conn.cursor()
@@ -100,36 +99,90 @@ def get_task(task_id):
   if res is None:
     raise InvalidUsage('Cannot locate task with ID=%s.' % (task_id,), status_code=404)
   else:
-    return jsonify({'task': make_public_task(dict(zip(keys, [col for col in res])))})
+    return jsonify(make_public_task(dict(zip(keys, [col for col in res]))))
 
 
 @bp.route('/tasks/<int:task_id>', methods=['PUT'])
-def update_task(task_id):
+def update_task_PUT(task_id):
   if not request.is_json:
     raise InvalidMediaType
+
+  # PUT requests should provide ALL attrs, else it should be a PATCH
+  source = request.get_json()
+  try:
+    updated_task = {
+      'task_title': source['task_title'],
+      'task_description': source['task_description'],
+      'task_complete': source['task_complete']
+    }
+  except KeyError as e:
+    raise MissingParam(missing_param=str(e))
+
+  # Attempt to validate and cooerce the request value to the correct int
+  try:
+    updated_task['task_complete'] = int(validate_bool(source['task_complete']))
+  except ValueError:
+    raise InvalidUsage('Invalid task_complete value')
 
   conn = get_db()
   c = conn.cursor()
   task = c.execute('SELECT * FROM task WHERE task_id=%s' % (task_id,))
-  res = task.fetchone()
-  if res is None:
+  if task.fetchone() is None:
     # Create the task that would be updated. PUT should be idempotent.
     return create_task()
-  else:
-    # Setup updated task from values present in request body
-    source = request.get_json()
-    updated_task = {
-      'task_title': source.get('task_title', None),
-      'task_description': source.get('task_description', None)
-    }
-    if source.get('task_complete', None) is not None:
-      try:
-        updated_task['task_complete'] = int(validate_bool(source.get('task_complete')))
-      except ValueError:
-        raise InvalidUsage('Invalid task_complete value')
 
-    # Loop through and run UPDATES replacing the values
-    # NOTE: this could probably be better done with .executemany()
+
+  # If we're here, this Task already exists and the request has passed all validation. Push an UPDATE to the Task present in db using values from updated_task.
+  try:
+    c.execute("""
+      UPDATE task
+      SET task_title='{title}', task_description='{desc}', task_complete='{complete}'
+      WHERE task_id={id}
+      """.format(
+        title=updated_task['task_title'],
+        desc=updated_task['task_description'],
+        complete=updated_task['task_complete'],
+        id=task_id
+        )
+      )
+    conn.commit()
+  except OperationalError as e:
+    raise InvalidUsage(e.msg)
+
+  return get_task(task_id)
+
+
+@bp.route('/tasks/<int:task_id>', methods=['PATCH'])
+def update_task_PATCH(task_id):
+  if not request.is_json:
+    raise InvalidMediaType
+
+  source = request.get_json()
+  updated_task = {
+      'task_title': source.get('task_title', None),
+      'task_description': source.get('task_description', None),
+      'task_complete': source.get('task_complete', None)
+    }
+
+  if updated_task['task_complete'] is not None:
+    # Validate and coerce the task_complete value
+    try:
+      updated_task['task_complete'] = int(validate_bool(source['task_complete']))
+    except ValueError:
+      raise InvalidUsage('Invalid task_complete value')
+
+  # Determine if this resource exists in the db
+  conn = get_db()
+  c = conn.cursor()
+  task = c.execute('SELECT * FROM task WHERE task_id=%s' % (task_id,))
+  res = task.fetchone()
+
+  # Task does not exist and creating a new Task requires a Title
+  if res is None:
+    # Create the task that would be updated.
+    return create_task()
+  else:
+    # Yes, this would probably be better as an executemany()
     for key, new_value in updated_task.items():
       try:
         if new_value is not None:
@@ -142,5 +195,64 @@ def update_task(task_id):
 
     conn.commit()
 
-    return get_task(task_id)
+  return get_task(task_id)
+
+
+
+
+  # try:
+  #   updated_task = {
+  #     'task_title': source['task_title'],
+  #     'task_description': source.get('task_description', None),
+  #     'task_complete': source.get('task_complete', None)
+  #   }
+  # except KeyError as e:
+  #   raise MissingParam(missing_param=str(e))
+
+  # # Attempt to validate and cooerce the request value to the correct int
+  # try:
+  #   updated_task['task_complete'] = int(validate_bool(source['task_complete']))
+  # except ValueError:
+  #   raise InvalidUsage('Invalid task_complete value')
+
+  # conn = get_db()
+  # c = conn.cursor()
+  # task = c.execute('SELECT * FROM task WHERE task_id=%s' % (task_id,))
+  # res = task.fetchone()
+  # if res is None:
+  #   # Create the task that would be updated.
+  #   return create_task()
+  # else:
+  #   # Setup updated task from values present in request body
+  #   source = request.get_json()
+  #   updated_task = {
+  #     'task_title': source.get('task_title', None),
+  #     'task_description': source.get('task_description', None)
+  #   }
+  #   if source.get('task_complete', None) is not None:
+  #     try:
+  #       updated_task['task_complete'] = int(validate_bool(source.get('task_complete')))
+  #     except ValueError:
+  #       raise InvalidUsage('Invalid task_complete value')
+
+  #   # Loop through and run UPDATES replacing the values
+  #   # NOTE: this could probably be better done with .executemany()
+  #   for key, new_value in updated_task.items():
+  #     try:
+  #       if new_value is not None:
+  #           c.execute(
+  #             """UPDATE task SET '{key}'='{new_value}'
+  #             WHERE task_id={task_id}""".format(
+  #               key=key, new_value=new_value, task_id=task_id))
+  #     except OperationalError:
+  #       raise InvalidUsage
+
+  #   conn.commit()
+
+  #   return get_task(task_id)
+
+
+
+
+
 
