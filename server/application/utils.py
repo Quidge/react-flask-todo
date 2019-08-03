@@ -38,7 +38,6 @@ def create_n_tasks(qty):
     t = {
       "task_title":f_title,
       "task_description": f_desc,
-      "task_order": i+1,
       "task_complete": bool(randint(0, 1))
     }
     tasks.append(t)
