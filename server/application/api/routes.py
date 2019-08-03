@@ -124,7 +124,7 @@ def update_task(task_id):
       try:
         updated_task['task_complete'] = int(validate_bool(source.get('task_complete')))
       except ValueError:
-        raise InvalidUsage('Invalid task_complete parameter')
+        raise InvalidUsage('Invalid task_complete value')
 
     # Loop through and run UPDATES replacing the values
     # NOTE: this could probably be better done with .executemany()
