@@ -3,6 +3,17 @@ from faker import Faker
 from random import randint
 
 
+def validate_bool(value):
+  """Attempts to determine if value is True or False; raises ValueError if it can't."""
+  str_val = str(value).lower()
+  if str_val == 'true' or str_val == '1':
+    return True
+  elif str_val == 'false' or str_val == '0':
+    return False
+  else:
+    raise ValueError('Unable to coerce value to boolean.')
+
+
 def create_n_tasks(qty):
   """Returns a list of :qty: Tasks.
   Task title, description, and completion status are randomized."""
