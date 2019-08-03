@@ -57,11 +57,10 @@ def fill_db(qty):
   c = conn.cursor()
   for t in create_n_tasks(qty):
     c.execute('''
-      INSERT INTO task (task_title, task_description, task_order, task_complete)
-      VALUES ('{title}', '{desc}', '{order}', '{complete}')'''.format(
+      INSERT INTO task (task_title, task_description, task_complete)
+      VALUES ('{title}', '{desc}', '{complete}')'''.format(
         title=t["task_title"],
         desc=t["task_description"],
-        order=t["task_order"],
         complete=t["task_complete"])
     )
   conn.commit()
