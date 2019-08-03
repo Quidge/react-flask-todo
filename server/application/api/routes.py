@@ -19,10 +19,12 @@ def make_public_task(task):
 
   return new_task
 
-# @bp.errorhandler(InvalidMediaType)
-# @bp.errorhandler(InvalidUsage)
-# def handle_invalid_usage(err):
-#   return jsonify(err.to_dict())
+
+# Register error handlers
+@bp.errorhandler(InvalidMediaType)
+@bp.errorhandler(InvalidUsage)
+def handle_invalid_usage(err):
+  return jsonify(err.to_dict())
 
 
 @bp.route('/')

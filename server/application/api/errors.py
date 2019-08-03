@@ -1,5 +1,3 @@
-from flask import jsonify
-
 # reference: http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 
 # Pattern stolen from https://flask.palletsprojects.com/en/1.1.x/patterns/apierrors/?highlight=error
@@ -39,12 +37,4 @@ class InvalidMediaType(InvalidUsage):
 
 # class NotFound(Exception):
 #   status_code
-
-
-# Register them
-@bp.errorhandler(InvalidMediaType)
-@bp.errorhandler(InvalidUsage)
-def handle_invalid_usage(err):
-  return jsonify(err.to_dict())
-
 
