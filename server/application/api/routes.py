@@ -50,13 +50,10 @@ def get_tasks():
 
 @bp.route('/tasks', methods=['POST'])
 def create_task():
-  # print(request.is_json)
-  # print(request.get_json(force=False, silent=False, cache=False))
-
-  # print(request.data)
-  # print(request.headers)
-  if not request.is_json or 'title' not in request.get_json():
-    abort(400)
+  if not request.is_json:
+    raise InvalidMediaType
+  if 'title' not in request.get_json():
+    raise MissingParam(missing_param='title')
 
   r_payload = request.get_json()
 
@@ -84,6 +81,7 @@ def create_task():
 
 @bp.route('/tasks/<int:task_id>', methods=['GET'])
 def get_task(task_id):
+
   conn = get_db()
   c = conn.cursor()
   task = c.execute('SELECT * FROM task WHERE task_id=%s' % (task_id,))
@@ -99,22 +97,10 @@ def get_task(task_id):
 def update_task(task_id):
   if not request.is_json:
     raise InvalidMediaType
-
   if 'id' not in request.get_json():
     raise MissingParam(missing_param='id')
-  try:
-    int(request.get_json()['id'])
-  except ValueError:
-    raise InvalidUsage('Invalid \'id\'')
-
-    # return jsonify(InvalidUsage(message='Invalid \'id\'.').to_dict())
-
-
-
-  # conn = get_db()
-  # c = conn.cursor()
   # try:
-  #   c.execute()
-
-
+  #   int(request.get_json()['id'])
+  # except ValueError:
+  #   raise InvalidUsage('Invalid \'id\'')
 
