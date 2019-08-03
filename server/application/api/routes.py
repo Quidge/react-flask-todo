@@ -75,7 +75,7 @@ def create_task():
 
   conn.commit()
 
-  # Get the task ID of the Task that was just created; autoincrement will 
+  # Get the task ID of the Task that was just created; autoincrement will cause the MAX task_id to be the one just created
   db_res = c.execute("""
     SELECT task_id, task_title, task_description, task_complete 
     FROM task WHERE task_id=(
