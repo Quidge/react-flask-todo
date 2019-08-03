@@ -1,6 +1,3 @@
-import json
-import sqlite3
-
 from flask import jsonify, request, url_for, abort
 
 from . import bp
@@ -99,8 +96,4 @@ def update_task(task_id):
     raise InvalidMediaType
   if 'id' not in request.get_json():
     raise MissingParam(missing_param='id')
-  # try:
-  #   int(request.get_json()['id'])
-  # except ValueError:
-  #   raise InvalidUsage('Invalid \'id\'')
 

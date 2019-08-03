@@ -2,8 +2,6 @@
 
 # Pattern stolen from https://flask.palletsprojects.com/en/1.1.x/patterns/apierrors/?highlight=error
 
-from . import bp
-
 
 class InvalidUsage(Exception):
   status_code = 400
@@ -46,13 +44,3 @@ class MissingParam(InvalidUsage):
 
     super().__init__(
       self.message, status_code=MissingParam.status_code, payload=self.payload)
-
-
-
-  # def __init__(self, message=None, status_code=None, payload=None):
-  #   InvalidUsage.__init__(self, message=self.message, status_code=self.status_code, payload=self.payload)
-  #   if self.message is 
-
-# class NotFound(Exception):
-#   status_code
-
