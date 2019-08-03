@@ -142,12 +142,3 @@ def update_task(task_id):
 
     return get_task(task_id)
 
-
-
-  # else:
-  #   try:
-
-  # task = c.execute('SELECT * FROM task WHERE task_id=200')
-
-  # return jsonify({'fail': True})
-
