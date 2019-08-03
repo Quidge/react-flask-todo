@@ -177,9 +177,8 @@ def update_task_PATCH(task_id):
   task = c.execute('SELECT * FROM task WHERE task_id=%s' % (task_id,))
   res = task.fetchone()
 
-  # Task does not exist and creating a new Task requires a Title
+  # Task does not exist so a new one will be created.
   if res is None:
-    # Create the task that would be updated.
     return create_task()
   else:
     # Yes, this would probably be better as an executemany()
