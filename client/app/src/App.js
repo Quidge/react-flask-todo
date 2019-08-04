@@ -6,11 +6,10 @@ import static_data from './static_task_list';
 
 // working with this palette: http://paletton.com/#uid=13E0u0ka-cw7dx8aNlygu83lZ4u
 const containerStyles = {
-  maxWidth: 600,
+  maxWidth: 550,
   minHeight: 300,
-  padding: `1.5em`,
   margin: `100px auto`,
-  backgroundColor: `lightgrey`,
+  backgroundColor: `#dfe1e6`,
   color: `#090F17`,
   boxShadow: `0px 39px 57px -4px black`
 }

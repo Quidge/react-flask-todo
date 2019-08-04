@@ -1,4 +1,16 @@
 import React from 'react';
+import styled from 'styled-components'
+
+const StyledTaskEntry = styled.div`
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  min-height: 2.5em;
+  // margin-bottom: 8px;
+  border-bottom: 1px solid #161F2A;
+  border-top: 1px solid #4E5D71;
+`
 
 export default class TaskEntry extends React.Component {
   // static propTypes = {
@@ -12,26 +24,25 @@ export default class TaskEntry extends React.Component {
     this.toggleTaskComplete = this.toggleTaskComplete.bind(this)
   }
   toggleTaskComplete(e) {
-    e.preventDefault();
-    this.setState((prevState, _) => ({task_complete: !prevState.task_complete})
-    )
+    this.setState({
+      task_complete: e.target.checked
+    })
   }
-  async changeTitle() {
-
-  }
-  async changeDesc() {
-
-  }
+  async changeTitle() {}
+  async changeDesc() {}
 
   render() {
-    // let task = this.props.task
-    // let textDec = task.task_complete ? `line-through`: `none`
-    let completeStyles = this.state.task_complete ? {textDecoration: `line-through`, color: `#4E5D71`} : {}
-
     return (
-      <div onClick={this.toggleTaskComplete} style={completeStyles}>
-      {this.state.task_title}
-      </div>
-    );
+      <StyledTaskEntry>
+        <input
+          type="checkbox"
+          className="taskComplete"
+          checked={this.state.task_complete}
+          onChange={this.toggleTaskComplete}
+          />
+        <label class="taskTitle"
+        >{this.state.task_title}</label>
+      </StyledTaskEntry>
+    )
   }
 }
