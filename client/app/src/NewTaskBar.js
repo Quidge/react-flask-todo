@@ -7,7 +7,7 @@ export default class NewTaskBar extends React.Component {
 
   render() {
     return (
-      <div></div>
+      <div style={{width: `100%`, backgroundColor: "darkslategrey", color: "white"}}>I'm a task bar.</div>
     );
   }
 }

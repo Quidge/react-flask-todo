@@ -1,19 +1,51 @@
 import React from 'react';
-import './App.css';
 import NewTaskBar from './NewTaskBar';
 import TaskList from './TaskList';
+
+import static_data from './static_task_list';
+
+// working with this palette: http://paletton.com/#uid=13E0u0ka-cw7dx8aNlygu83lZ4u
+const containerStyles = {
+  maxWidth: 600,
+  minHeight: 300,
+  padding: `1.5em`,
+  margin: `100px auto`,
+  backgroundColor: `lightgrey`,
+  color: `#090F17`,
+  boxShadow: `0px 39px 57px -4px black`
+}
+// box shadow properties:
+// [horizontal offset] [vertical offset] [blur radius] [optional spread radius] [color];
+
+function Container(props) {
+  return <div style={containerStyles}>{props.children}</div>
+}
 
 class App extends React.Component {
   // static propTypes = {
   //   name: React.PropTypes.string,
   // };
 
+  // async fetch(`/api/tasks`).then(res => res.json())
+  // async getTasks() {
+  //   return await fetch('/api/tasks').then(res => res.json())
+  // }
+  // getTasks() {
+  //     return fetch('/api/tasks').then(res => res.json())
+  // }
+
   render() {
+    // let tasks = fetch('/api/tasks').then(res => res.json())
+    // let tasks = async () => {
+    //   let res = await fetch('/api/tasks')
+    //   return res.json()
+    // }
+    let tasks = static_data();
     return (
-      <div>
-        <NewTaskBar></NewTaskBar>
-        <TaskList></TaskList>
-      </div>
+        <Container>
+          <NewTaskBar></NewTaskBar>
+          <TaskList tasks={tasks}></TaskList>
+        </Container>
     );
   }
 }
