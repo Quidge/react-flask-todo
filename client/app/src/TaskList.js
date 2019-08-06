@@ -5,18 +5,24 @@ export default class TaskList extends React.Component {
   // static propTypes = {
   //   name: React.PropTypes.string,
   // };
+  state = {
+    tasks: []
+  }
+  componentDidMount() {
+    this.getTasks()
+  }
 
-  // markCompleted = (task_uri) => {
-
-  // }
+  getTasks = async () => {
+    let res = await fetch('/api/tasks')
+    let { tasks } = await res.json()
+    console.log(tasks)
+    this.setState({tasks: tasks})
+  }
 
   render() {
-    let tasks = this.props.tasks.tasks
-    console.log(this.props.tasks)
-    console.log(tasks)
     return (
       <div>
-        {tasks.map(task => (
+        {this.state.tasks.map(task => (
           <TaskEntry key={task.task.task_uri} task={task.task}/>
           ))}
       </div>
