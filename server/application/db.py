@@ -48,6 +48,7 @@ def init_db_command():
 @click.argument('qty')
 @with_appcontext
 def fill_db(qty):
+  """Run `init-db` and fill the tables with <qty> tasks."""
   qty = int(qty)
   click.echo('Wiping old db')
   init_db()
