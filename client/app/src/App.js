@@ -1,70 +1,166 @@
 import React from 'react';
-import NewTaskBar from './NewTaskBar';
-import TaskList from './TaskList';
+import styled from 'styled-components'
 
-import static_data from './static_task_list';
+import Header from './Header'
+import Footer from './Footer'
+import TaskEntry from './TaskEntry'
 
 // working with this palette: http://paletton.com/#uid=13E0u0ka-cw7dx8aNlygu83lZ4u
-const containerStyles = {
-  maxWidth: 550,
-  minHeight: 300,
-  margin: `100px auto`,
-  backgroundColor: `#dfe1e6`,
-  color: `#090F17`,
-  boxShadow: `0px 39px 57px -4px black`
-}
+const StyledContainer = styled.div`
+  max-width: 500px;
+  min-height: 300px;
+  max-height: 65vh;
+  margin: 100px auto;
+  background-color: #dfe1e6;
+  color: #090F17;
+  box-shadow: 0px 39px 57px -4px black;
+`
 // box shadow properties:
 // [horizontal offset] [vertical offset] [blur radius] [optional spread radius] [color];
 
-function Container(props) {
-  return <div style={containerStyles}>{props.children}</div>
+function clipLocalHost(url) {
+  return url.match(/localhost:[0-9]+(.*)/)[1]
 }
 
 class App extends React.Component {
   // static propTypes = {
   //   name: React.PropTypes.string,
   // };
+  constructor(props) {
+    super(props)
+    this.getTaskDict = this.getTaskDict.bind(this)
+    this.state = {
+      tasks: {},
+      newTaskTitle: ''
+    }
+    this.toggleTaskComplete = this.toggleTaskComplete.bind(this)
+    this.handleTaskTitleChange = this.handleTaskTitleChange.bind(this)
+    this.createNewTask = this.createNewTask.bind(this)
+  }
 
-  // async fetch(`/api/tasks`).then(res => res.json())
-  // async getTasks() {
-  //   return await fetch('/api/tasks').then(res => res.json())
-  // }
-  // getTasks() {
-  //     return fetch('/api/tasks').then(res => res.json())
-  // }
+  componentDidMount() {
+    this.getTaskDict().then(taskDict => this.setState({tasks: taskDict}))
+  }
+
+  async getTaskDict() {
+    let res = await fetch('/api/tasks')
+    let { tasks } = await res.json()
+    // turn the tasks array into a dict keyed to each task's task_uri
+    let taskDict = tasks.reduce((dict, item) => {
+      dict[clipLocalHost(item.task.task_uri)] = item
+      return dict
+    }, this.state.tasks)
+    return taskDict
+  }
+
+  handleTaskTitleChange(event) {
+    this.setState({newTaskTitle: event.target.value})
+  }
+
+  toggleTaskComplete(task) {
+    // set the fetch payload
+    const payload = {
+      headers: {"Content-Type": "application/json"},
+      method: "PATCH",
+      body: JSON.stringify({
+        task_complete: !task.task_complete
+      })
+    }
+    // get the key
+    const key = clipLocalHost(task.task_uri)
+    
+    // Fire off to the api
+    fetch(key, payload)
+      .then(res => {
+        if (!res.ok) throw Error(res.statusText)
+      })
+      .catch(e => {
+        // this is an attempt to return early before state updates if
+        // the api fails. it doesn't work though.
+        alert(e)
+        return;
+      })
+
+    // making a copy updatedTask is only necessary to prevent further
+    // nesting madness. it's possible to continue the ... spread pattern
+    // all the way down to task_complete
+    let updatedTask = this.state.tasks[key]
+    updatedTask.task.task_complete = !updatedTask.task.task_complete
+    this.setState(prevState => ({
+      ...prevState,
+      tasks: {
+        ...prevState.tasks,
+        [key]: updatedTask
+      }
+    }))
+  }
+
+  createNewTask(event) {
+    event.preventDefault()
+
+    // prefill in everything about the task that can be known before the fetch
+    const newTask = {
+      task: {
+        task_title: event.target.children.task_title.value,
+        task_complete: false
+      }
+    }
+
+    // in addition to firing off the task, this will get the URI back
+    // from the server
+    const payload = {
+      headers: {"Content-Type": "application/json"},
+      method: "POST",
+      body: JSON.stringify({
+        task_title: newTask.task.task_title
+      })
+    }
+    fetch('/api/tasks', payload)
+      .then(res => res.json())
+      .then(res => {
+        const uri = clipLocalHost(res.task.task_uri)
+        newTask.task['task_uri'] = uri
+        // add the new task to tasks + reset the newTaskTitle
+        this.setState(prevState => ({
+          ...prevState,
+          tasks: {
+            ...prevState.tasks,
+            [uri]: newTask
+          },
+          newTaskTitle: ''
+        }))
+      })
+
+    alert('A task was created')
+  }
+
 
   render() {
-    // let tasks = fetch('/api/tasks').then(res => res.json())
-    // let tasks = async () => {
-    //   let res = await fetch('/api/tasks')
-    //   return res.json()
-    // }
-    let tasks = static_data();
+    let taskEntries = []
+    for (let [key, task] of Object.entries(this.state.tasks)) {
+      let entry = (
+        <TaskEntry
+          task={task.task}
+          key={key}
+          toggleTaskComplete={this.toggleTaskComplete}
+        />
+      )
+      taskEntries.push(entry)
+    }
+
     return (
-        <Container>
-          <NewTaskBar></NewTaskBar>
-          <TaskList tasks={tasks}></TaskList>
-        </Container>
+      <StyledContainer>
+        <Header
+          taskTitle={this.state.newTaskTitle}
+          handleSubmit={this.createNewTask}
+          handleChange={this.handleTaskTitleChange}
+          disabled={!(this.state.newTaskTitle.length > 0)}
+        />
+        {taskEntries}
+        <Footer/>
+      </StyledContainer>
     );
   }
 }
 
-
-// function App() {
-//   // fetch(`/api/tasks`).then(res => console.log(res))
-//   fetch(`/api/tasks`)
-//   .then(res => res.json())
-//   .then(json => console.log(json))
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <p>
-//           I'm a text<code>src/App.js</code> and save to reload.
-//         </p>
-//       </header>
-//     </div>
-//   );
-// }
-
 export default App;
-

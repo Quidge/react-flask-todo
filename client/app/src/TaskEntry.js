@@ -1,5 +1,6 @@
 import React from 'react';
-import styled from 'styled-components'
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 const StyledTaskEntry = styled.div`
   font-size: 1.5em;
@@ -12,37 +13,28 @@ const StyledTaskEntry = styled.div`
   border-top: 1px solid #4E5D71;
 `
 
-export default class TaskEntry extends React.Component {
-  // static propTypes = {
-  //   name: React.PropTypes.string,
-  // };
-  constructor(props) {
-    super(props)
-    this.state = {
-      ...this.props.task
-    }
-    this.toggleTaskComplete = this.toggleTaskComplete.bind(this)
-  }
-  toggleTaskComplete(e) {
-    this.setState({
-      task_complete: e.target.checked
-    })
-  }
-  async changeTitle() {}
-  async changeDesc() {}
-
-  render() {
-    return (
-      <StyledTaskEntry>
-        <input
-          type="checkbox"
-          className="taskComplete"
-          checked={this.state.task_complete}
-          onChange={this.toggleTaskComplete}
-          />
-        <label class="taskTitle"
-        >{this.state.task_title}</label>
-      </StyledTaskEntry>
-    )
-  }
+const TaskEntry = (props) => {
+  let t = props.task
+  return (
+    <StyledTaskEntry>
+      <input
+        type="checkbox"
+        className="taskComplete"
+        checked={t.task_complete}
+        onChange={() => props.toggleTaskComplete(t)}
+        />
+      <label className="taskTitle">{t.task_title}</label>
+    </StyledTaskEntry>
+  )
 }
+
+TaskEntry.propTypes = {
+  task: PropTypes.shape({
+    task_complete: PropTypes.bool.isRequired,
+    task_title: PropTypes.string.isRequired,
+    task_uri: PropTypes.string.isRequired,
+  }),
+  toggleTaskComplete: PropTypes.func.isRequired
+}
+
+export default TaskEntry;
