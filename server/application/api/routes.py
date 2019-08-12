@@ -115,7 +115,8 @@ def update_task_PUT(task_id):
     updated_task = {
       'task_title': source['task_title'],
       'task_description': source['task_description'],
-      'task_complete': source['task_complete']
+      'task_complete': source['task_complete'],
+      'task_archived': source['task_archived'],
     }
   except KeyError as e:
     raise MissingParam(missing_param=str(e))
@@ -125,6 +126,10 @@ def update_task_PUT(task_id):
     updated_task['task_complete'] = int(validate_bool(source['task_complete']))
   except ValueError:
     raise InvalidUsage('Invalid task_complete value')
+  try:
+    updated_task['task_archived'] = int(validate_bool(source['task_archived']))
+  except ValueError:
+    raise InvalidUsage('Invalid task_archived value')
 
   conn = get_db()
   c = conn.cursor()
@@ -138,12 +143,13 @@ def update_task_PUT(task_id):
   try:
     c.execute("""
       UPDATE task
-      SET task_title='{title}', task_description='{desc}', task_complete='{complete}'
+      SET task_title='{title}', task_description='{desc}', task_complete={complete}, task_archived={archived}
       WHERE task_id={id}
       """.format(
         title=updated_task['task_title'],
         desc=updated_task['task_description'],
         complete=updated_task['task_complete'],
+        archived=updated_task['task_archived'],
         id=task_id
         )
       )
