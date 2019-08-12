@@ -177,7 +177,6 @@ class App extends React.Component {
         }))
       })
 
-    alert('A task was created')
   }
 
 
