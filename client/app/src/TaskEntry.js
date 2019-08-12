@@ -25,7 +25,7 @@ const TaskEntry = (props) => {
         onChange={() => props.toggleTaskComplete(t)}
         />
       <label className="taskTitle">{t.task_title}</label>
-      <ArchiveIcon archiveTask={props.archiveTask}/>
+      <ArchiveIcon task={props.task} archiveTask={props.archiveTask}/>
     </StyledTaskEntry>
   )
 }
@@ -36,7 +36,8 @@ TaskEntry.propTypes = {
     task_title: PropTypes.string.isRequired,
     task_uri: PropTypes.string.isRequired,
   }),
-  toggleTaskComplete: PropTypes.func.isRequired
+  toggleTaskComplete: PropTypes.func.isRequired,
+  archiveTask: PropTypes.func.isRequired,
 }
 
 export default TaskEntry;

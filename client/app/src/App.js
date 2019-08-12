@@ -59,7 +59,41 @@ class App extends React.Component {
   }
 
   archiveTask(task) {
-    alert('task archived')
+    // set the fetch payload
+    const payload = {
+      headers: {"Content-Type": "application/json"},
+      method: "PATCH",
+      body: JSON.stringify({
+        task_archived: !task.task_archived
+      })
+    }
+    // get the key
+    const key = clipLocalHost(task.task_uri)
+    
+    // Fire off to the api
+    fetch(key, payload)
+      .then(res => {
+        if (!res.ok) throw Error(res.statusText)
+      })
+      .catch(e => {
+        // this is an attempt to return early before state updates if
+        // the api fails. it doesn't work though.
+        alert(e)
+        return;
+      })
+
+    // making a copy updatedTask is only necessary to prevent further
+    // nesting madness. it's possible to continue the ... spread pattern
+    // all the way down to task_complete
+    let updatedTask = this.state.tasks[key]
+    updatedTask.task.task_archived = !updatedTask.task.task_archived
+    this.setState(prevState => ({
+      ...prevState,
+      tasks: {
+        ...prevState.tasks,
+        [key]: updatedTask
+      }
+    }))
   }
 
   toggleTaskComplete(task) {
@@ -142,7 +176,11 @@ class App extends React.Component {
 
   render() {
     let taskEntries = []
-    for (let [key, task] of Object.entries(this.state.tasks)) {
+    const unarchived = (Object.entries(this.state.tasks)).filter(
+      ([_, task]) => {
+        return !task.task.task_archived
+      })
+    for (let [key, task] of unarchived) {
       let entry = (
         <TaskEntry
           task={task.task}
