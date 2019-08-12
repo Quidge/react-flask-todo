@@ -18,6 +18,8 @@ def make_public_task(task_dict):
     # Switch task_complete from numeric 0/1 to bool True/False
     elif key == 'task_complete':
       new_task['task_complete'] = bool(value)
+    elif key == 'task_archived':
+      new_task['task_archived'] = bool(value)
     else:
       new_task[key] = task_dict[key]
 
