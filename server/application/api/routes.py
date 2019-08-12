@@ -169,7 +169,8 @@ def update_task_PATCH(task_id):
   updated_task = {
       'task_title': source.get('task_title', None),
       'task_description': source.get('task_description', None),
-      'task_complete': source.get('task_complete', None)
+      'task_complete': source.get('task_complete', None),
+      'task_archived': source.get('task_archived', None),
     }
 
   if updated_task['task_complete'] is not None:
@@ -178,6 +179,13 @@ def update_task_PATCH(task_id):
       updated_task['task_complete'] = int(validate_bool(source['task_complete']))
     except ValueError:
       raise InvalidUsage('Invalid task_complete value')
+
+  if updated_task['task_archived'] is not None:
+    # Validate and coerce the task_archived value
+    try:
+      updated_task['task_archived'] = int(validate_bool(source['task_archived']))
+    except ValueError:
+      raise InvalidUsage('Invalid task_archived value')
 
   # Determine if this resource exists in the db
   conn = get_db()
