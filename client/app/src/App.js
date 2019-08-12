@@ -36,6 +36,7 @@ class App extends React.Component {
     this.toggleTaskComplete = this.toggleTaskComplete.bind(this)
     this.handleTaskTitleChange = this.handleTaskTitleChange.bind(this)
     this.createNewTask = this.createNewTask.bind(this)
+    this.archiveTask = this.archiveTask.bind(this)
   }
 
   componentDidMount() {
@@ -55,6 +56,10 @@ class App extends React.Component {
 
   handleTaskTitleChange(event) {
     this.setState({newTaskTitle: event.target.value})
+  }
+
+  archiveTask(task) {
+    alert('task archived')
   }
 
   toggleTaskComplete(task) {
@@ -143,6 +148,7 @@ class App extends React.Component {
           task={task.task}
           key={key}
           toggleTaskComplete={this.toggleTaskComplete}
+          archiveTask={this.archiveTask}
         />
       )
       taskEntries.push(entry)

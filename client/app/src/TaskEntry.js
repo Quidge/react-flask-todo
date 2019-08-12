@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import ArchiveIcon from './ArchiveIcon';
 
 const StyledTaskEntry = styled.div`
   font-size: 1.5em;
@@ -24,6 +25,7 @@ const TaskEntry = (props) => {
         onChange={() => props.toggleTaskComplete(t)}
         />
       <label className="taskTitle">{t.task_title}</label>
+      <ArchiveIcon archiveTask={props.archiveTask}/>
     </StyledTaskEntry>
   )
 }
