@@ -24,4 +24,5 @@ CREATE TABLE task (
   task_title TEXT NOT NULL,
   task_description TEXT,
   task_complete BOOLEAN NOT NULL
+  task_archived BOOLEAN NOT NULL DEFAULT FALSE
 );
