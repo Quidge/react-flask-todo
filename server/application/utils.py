@@ -38,7 +38,7 @@ def create_n_tasks(qty):
     t = {
       "task_title":f_title,
       "task_description": f_desc,
-      "task_complete": bool(randint(0, 1))
+      "task_complete": randint(0, 1),
       "task_archived": randint(0, 1)
     }
     tasks.append(t)
