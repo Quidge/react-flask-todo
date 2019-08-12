@@ -48,7 +48,14 @@ class App extends React.Component {
     let { tasks } = await res.json()
     // turn the tasks array into a dict keyed to each task's task_uri
     let taskDict = tasks.reduce((dict, item) => {
-      dict[clipLocalHost(item.task.task_uri)] = item
+      // make a copy
+      let reactTask = item
+      // get a clipped uri
+      const clippedUri = clipLocalHost(item.task.task_uri)
+      // overwrite the api uri with the clipped uri
+      reactTask.task.task_uri = clippedUri
+      // key the dict to the react version of the task
+      dict[clippedUri] = reactTask
       return dict
     }, this.state.tasks)
     return taskDict
@@ -68,7 +75,7 @@ class App extends React.Component {
       })
     }
     // get the key
-    const key = clipLocalHost(task.task_uri)
+    const key = task.task_uri
     
     // Fire off to the api
     fetch(key, payload)
@@ -106,7 +113,7 @@ class App extends React.Component {
       })
     }
     // get the key
-    const key = clipLocalHost(task.task_uri)
+    const key = task.task_uri
     
     // Fire off to the api
     fetch(key, payload)
@@ -138,7 +145,7 @@ class App extends React.Component {
     event.preventDefault()
 
     // prefill in everything about the task that can be known before the fetch
-    const newTask = {
+    let newTask = {
       task: {
         task_title: event.target.children.task_title.value,
         task_complete: false
