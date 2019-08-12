@@ -3,15 +3,24 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import ArchiveIcon from './ArchiveIcon';
 
-const StyledTaskEntry = styled.div`
+const StyledTaskEntry = styled.li`
+  margin: .3em .75em;
+  border-radius: 7px;
   font-size: 1.5em;
   display: flex;
   align-items: center;
   background-color: white;
   min-height: 2.5em;
-  // margin-bottom: 8px;
-  border-bottom: 1px solid #161F2A;
-  border-top: 1px solid #4E5D71;
+  border-bottom: 2px solid lightgrey;
+  
+  input.taskComplete,
+  button {
+    margin: 0 1em;
+  }
+  label.taskTitle {
+    flex: 0 1 100%;
+  }
+
 `
 
 const TaskEntry = (props) => {
@@ -25,7 +34,10 @@ const TaskEntry = (props) => {
         onChange={() => props.toggleTaskComplete(t)}
         />
       <label className="taskTitle">{t.task_title}</label>
-      <ArchiveIcon task={props.task} archiveTask={props.archiveTask}/>
+      <ArchiveIcon
+        task={props.task}
+        archiveTask={props.archiveTask}
+        className="archiveIcon"/>
     </StyledTaskEntry>
   )
 }

@@ -1,31 +1,17 @@
 import React from 'react';
-import TaskEntry from './TaskEntry';
+import styled from 'styled-components'
 
-export default class TaskList extends React.Component {
-  // static propTypes = {
-  //   name: React.PropTypes.string,
-  // };
-  state = {
-    tasks: []
-  }
-  componentDidMount() {
-    this.getTasks()
-  }
+const StyledTaskList = styled.ul`
+  min-height: 300px;
+  display: block;
+  margin: 0;
+  padding: 0;
+`
 
-  getTasks = async () => {
-    let res = await fetch('/api/tasks')
-    let { tasks } = await res.json()
-    console.log(tasks)
-    this.setState({tasks: tasks})
-  }
-
-  render() {
-    return (
-      <div>
-        {this.state.tasks.map(task => (
-          <TaskEntry key={task.task.task_uri} task={task.task}/>
-          ))}
-      </div>
-    );
-  }
+const TaskList = (props) => {
+  return (
+    <StyledTaskList>{props.children}</StyledTaskList>
+  )
 }
+
+export default TaskList;

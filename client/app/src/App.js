@@ -4,12 +4,13 @@ import styled from 'styled-components'
 import Header from './Header'
 import Footer from './Footer'
 import TaskEntry from './TaskEntry'
+import TaskList from './TaskList'
 
 // working with this palette: http://paletton.com/#uid=13E0u0ka-cw7dx8aNlygu83lZ4u
 const StyledContainer = styled.div`
   max-width: 500px;
   min-height: 300px;
-  max-height: 65vh;
+  // max-height: 65vh;
   margin: 100px auto;
   background-color: #dfe1e6;
   color: #090F17;
@@ -176,7 +177,6 @@ class App extends React.Component {
           newTaskTitle: ''
         }))
       })
-
   }
 
 
@@ -206,7 +206,7 @@ class App extends React.Component {
           handleChange={this.handleTaskTitleChange}
           disabled={!(this.state.newTaskTitle.length > 0)}
         />
-        {taskEntries}
+        <TaskList>{taskEntries}</TaskList>
         <Footer/>
       </StyledContainer>
     );
