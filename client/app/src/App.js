@@ -15,6 +15,7 @@ const StyledContainer = styled.div`
   background-color: #dfe1e6;
   color: #090F17;
   box-shadow: 0px 39px 57px -4px black;
+  border-radius: 7px;
 `
 // box shadow properties:
 // [horizontal offset] [vertical offset] [blur radius] [optional spread radius] [color];
