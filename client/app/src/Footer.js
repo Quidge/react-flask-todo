@@ -32,22 +32,29 @@ const StyledFooter = styled.div`
 
 const Footer = (props) => {
   let allTasks = Object.entries(props.tasks)
-  let allUnarchived = allTasks
+  let unarchivedTasks = allTasks
     .filter(([key, value]) => {
       return !value.task.task_archived
     })
     .map(([_, value]) => value)
-  let remainingUnfinished = allUnarchived.filter(({task}) => !task.task_complete)
+  let unfinishedUnarchivedTasks = unarchivedTasks.filter(({task}) => !task.task_complete)
+  let completedUnarchivedTasks = unarchivedTasks.filter(({task}) => task.task_complete)
   let buttonVisible = (
-    (allUnarchived.length - remainingUnfinished.length) > 0 ? 'active' : ''
+    (unarchivedTasks.length - unfinishedUnarchivedTasks.length) > 0 ? 'active' : ''
   )
   let buttonClasses = `clearCompleted ${buttonVisible}`
   return (
     <StyledFooter>
       <span className="remaining-tasks">
-        {remainingUnfinished.length} tasks left
+        {unfinishedUnarchivedTasks.length} tasks left
       </span>
-      <button className={buttonClasses} disabled={!Boolean(buttonVisible)}>
+      <button
+        className={buttonClasses}
+        disabled={!Boolean(buttonVisible)}
+        onClick={(e) => {
+          e.preventDefault();
+          return props.archiveCompletedTasks(completedUnarchivedTasks)
+        }}>
         Archive completed
       </button>
     </StyledFooter>

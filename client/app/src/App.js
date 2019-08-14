@@ -39,6 +39,7 @@ class App extends React.Component {
     this.handleTaskTitleChange = this.handleTaskTitleChange.bind(this)
     this.createNewTask = this.createNewTask.bind(this)
     this.archiveTask = this.archiveTask.bind(this)
+    this.archiveCompletedTasks = this.archiveCompletedTasks.bind(this)
   }
 
   componentDidMount() {
@@ -103,6 +104,11 @@ class App extends React.Component {
         [key]: updatedTask
       }
     }))
+  }
+  archiveCompletedTasks(task_array) {
+    for (let task of task_array) {
+      this.archiveTask(task.task)
+    }
   }
 
   toggleTaskComplete(task) {
@@ -208,7 +214,10 @@ class App extends React.Component {
           disabled={!(this.state.newTaskTitle.length > 0)}
         />
         <TaskList>{taskEntries}</TaskList>
-        <Footer tasks={this.state.tasks}/>
+        <Footer
+          tasks={this.state.tasks}
+          archiveCompletedTasks={this.archiveCompletedTasks}
+        />
       </StyledContainer>
     );
   }
