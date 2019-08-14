@@ -27,6 +27,9 @@ const StyledFooter = styled.div`
     &[disabled] {
       cursor: auto;
     }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `
 
