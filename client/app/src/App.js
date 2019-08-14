@@ -208,7 +208,7 @@ class App extends React.Component {
           disabled={!(this.state.newTaskTitle.length > 0)}
         />
         <TaskList>{taskEntries}</TaskList>
-        <Footer/>
+        <Footer tasks={this.state.tasks}/>
       </StyledContainer>
     );
   }
