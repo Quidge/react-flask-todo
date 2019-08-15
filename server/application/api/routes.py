@@ -34,11 +34,6 @@ def handle_invalid_usage(err):
   return jsonify(err.to_dict()), err.status_code
 
 
-@bp.route('/')
-def hello():
-  return 'Hello, world!'
-
-
 @bp.route('/tasks', methods=['GET'])
 def get_tasks():
   conn = get_db()
