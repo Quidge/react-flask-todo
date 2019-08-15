@@ -2,6 +2,8 @@
 
 This is a toy Todo project. The create-react-app frontend connects to a Flask REST API.
 
+![Example useage of the React application](/exampleuse2019-08-15.gif)
+
 ### More information specific to the client and server can be found at `react-flask-todo/client/readme.md` and `react-flask-todo/server/readme.md` respectively.
 
 ### The app uses the following concepts/technologies:
