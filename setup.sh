@@ -1,23 +1,38 @@
-# Seed and setup backend
+###
+# Setup backend
+###
+echo ""
+echo "Setting up backend"
+echo ""
 
-# Create venv
 echo "Creating venv"
 cd server
 python3 -m venv venv
 source venv/bin/activate
 
-# install backend modules
 echo "Installing python modules"
 pip install -r requirements.txt
-
-# seed app with 5 generated tasks
 export FLASK_APP=application
 
+echo "Seeding db with 5 randomly generated tasks"
 flask fill-db 5
 
 deactivate
+echo ""
+echo "Finished setting up backend"
+echo ""
+
+###
+# Setup frontend
+###
+echo ""
+echo "Setting up frontend"
+echo ""
 
 cd ../client/app
 npm install
 
 cd ../../
+echo ""
+echo "Finished setting up frontend"
+echo ""
